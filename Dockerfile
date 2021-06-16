@@ -84,7 +84,7 @@ RUN update-rc.d -f spamassassin remove
 #RUN freshclam
 #RUN service clamav-daemon start
 # --- Erro amavisd-new
-RUN wget https://git.ispconfig.org/ispconfig/ispconfig3/raw/stable-3.1/helper_scripts/ubuntu-amavisd-new-2.11.patch -P /tmp
+#RUN wget https://git.ispconfig.org/ispconfig/ispconfig3/raw/stable-3.1/helper_scripts/ubuntu-amavisd-new-2.11.patch -P /tmp
 RUN cd /usr/sbin
 #RUN cp -pf amavisd-new amavisd-new_bak 
 #RUN patch < /tmp/ubuntu-amavisd-new-2.11.patch
