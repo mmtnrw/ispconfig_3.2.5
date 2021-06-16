@@ -20,9 +20,9 @@
 # https://www.howtoforge.com/tutorial/perfect-server-ubuntu-18.04-with-apache-php-myqsl-pureftpd-bind-postfix-doveot-and-ispconfig/3/
 #
 
-FROM ubuntu:18.04
+FROM ubuntu:latest
 
-MAINTAINER Weberson S Pimentel <weberson.pimentel@hotmail.com> version: 0.1
+MAINTAINER mmtnrw <info@mmt.nrw> version: 0.1
 
 # --- 1 Inciando 
 RUN apt-get -y update && apt-get -y upgrade
@@ -45,7 +45,7 @@ RUN dpkg-reconfigure dash
 #RUN apt-get remove apparmor apparmor-utils
 
 # --- 5 Synchronize the System Clock
-ENV TZ=America/Sao_Paulo
+ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt-get -y install ntp ntpdate
 
@@ -188,7 +188,7 @@ RUN service apache2 restart
 
 # --- 24 Install ISPConfig 3
 RUN cd /tmp \
-&& wget -O ISPConfig-3.1-dev.tar.gz https://git.ispconfig.org/ispconfig/ispconfig3/repository/archive.tar.gz?ref=stable-3.1 \
+&& wget -O ISPConfig-3.1-dev.tar.gz https://ispconfig.org/downloads/ISPConfig-3.2.5.tar.gz \
 && tar xfz ISPConfig-3.1-dev.tar.gz \
 && mv ispconfig3-stable-3.1* ispconfig3_install
 
