@@ -121,7 +121,7 @@ RUN a2enmod actions proxy_fcgi alias
 RUN service apache2 restart
 
 # --- 14 Install HHVM (HipHop Virtual Machine)
-RUN apt-get -y install hhvm
+#RUN apt-get -y install hhvm
 
 # --- 15 Install Let's Encrypt
 #RUN apt-get -y install certbot
