@@ -64,7 +64,7 @@ RUN echo "mariadb-server-10.0 mysql-server/root_password password pass" | debcon
 RUN echo "mariadb-server-10.0 mysql-server/root_password_again password pass" | debconf-set-selections
 RUN echo -n "Installing SMTP Mail server (Postfix)... " \
 && echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections \
-&& echo "postfix postfix/mailname string contato@seusite.con.br" | debconf-set-selections
+&& echo "postfix postfix/mailname string mail.mmt.nrw" | debconf-set-selections
 RUN apt-get -y install postfix postfix-mysql postfix-doc mariadb-client mariadb-server openssl getmail rkhunter binutils dovecot-imapd dovecot-pop3d dovecot-mysql dovecot-sieve dovecot-lmtpd sudo
 ADD ./etc/postfix/master.cf /etc/postfix/master.cf
 RUN mv /etc/mysql/mariadb.conf.d/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf.backup
@@ -107,7 +107,7 @@ RUN echo 'phpmyadmin phpmyadmin/dbconfig-install boolean true' | debconf-set-sel
 #RUN a2enconf httpoxy
 #RUN echo "ServerName localhost" | sudo tee /etc/apache2/conf-available/servername.conf
 #RUN sudo a2enconf servername
-RUN echo $(grep $(hostname) /etc/hosts | cut -f1) localhost >> /etc/hosts && apt-get -y install apache2 apache2-doc apache2-utils libapache2-mod-php php7.4 php7.4-common php7.4-gd php7.4-mysql php7.4-imap phpmyadmin php7.4-cli php7.4-cgi libapache2-mod-fcgid apache2-suexec-pristine php-pear mcrypt  imagemagick libruby libapache2-mod-python php7.4-curl php7.4-intl php7.4-pspell php7.4-sqlite3 php7.4-tidy php7.4-xmlrpc php7.4-xsl memcached php-memcache php-imagick php7.4-zip php7.4-mbstring php-soap php7.4-soap php-gettext
+RUN echo $(grep $(hostname) /etc/hosts | cut -f1) localhost >> /etc/hosts && apt-get -y install apache2 apache2-doc apache2-utils libapache2-mod-php php7.4 php7.4-common php7.4-gd php7.4-mysql php7.4-imap phpmyadmin php7.4-cli php7.4-cgi libapache2-mod-fcgid apache2-suexec-pristine php-pear mcrypt  imagemagick libruby libapache2-mod-python php7.4-curl php7.4-intl php7.4-pspell php7.4-sqlite3 php7.4-tidy php7.4-xmlrpc php7.4-xsl memcached php-memcache php-imagick php7.4-zip php7.4-mbstring php-soap php7.4-soap
 RUN echo "ServerName localhost" > /etc/apache2/conf-available/servername.conf && a2enconf servername
 ADD ./etc/apache2/conf-available/httpoxy.conf /etc/apache2/conf-available/httpoxy.conf
 RUN a2enmod suexec rewrite ssl actions include dav_fs dav auth_digest cgi headers && a2enconf httpoxy && a2dissite 000-default && service apache2 restart
@@ -126,16 +126,16 @@ RUN service apache2 restart
 # --- 15 Install Let's Encrypt
 #RUN apt-get -y install certbot
 #RUN apt-get -y install python-certbot-apache -t jessie-backports
-RUN apt-get -y install python-certbot-apache
+RUN apt-get -y install python3-certbot-apache
 
 # --- 16 Install Mailman
-RUN echo 'mailman mailman/default_server_language en' | debconf-set-selections
-RUN apt-get -y install mailman
-ADD ./etc/aliases /etc/aliases
-RUN newaliases
-RUN service postfix restart
-RUN ln -s /etc/mailman/apache.conf /etc/apache2/conf-enabled/mailman.conf
-RUN service apache2 restart
+#RUN echo 'mailman mailman/default_server_language en' | debconf-set-selections
+#RUN apt-get -y install mailman
+#ADD ./etc/aliases /etc/aliases
+#RUN newaliases
+#RUN service postfix restart
+#RUN ln -s /etc/mailman/apache.conf /etc/apache2/conf-enabled/mailman.conf
+#RUN service apache2 restart
 
 # --- 17 Install PureFTPd and Quota
 RUN apt-get -y install pure-ftpd-common pure-ftpd-mysql quota quotatool
@@ -155,19 +155,19 @@ RUN systemctl enable haveged
 #RUN systemctl start haveged
 
 # --- 19 Install Vlogger, Webalizer, and AWStats
-RUN apt-get -y install vlogger webalizer awstats geoip-database libclass-dbi-mysql-perl
-ADD etc/cron.d/awstats /etc/cron.d/
+#RUN apt-get -y install vlogger webalizer awstats geoip-database libclass-dbi-mysql-perl
+#ADD etc/cron.d/awstats /etc/cron.d/
 
 # --- 20 Install Jailkit
-RUN apt-get -y install build-essential autoconf automake libtool flex bison debhelper binutils
+RUN apt-get -y install build-essential autoconf automake libtool flex bison debhelper binutils python
 RUN cd /tmp \
-&& wget http://olivier.sessink.nl/jailkit/jailkit-2.19.tar.gz \
-&& tar xvfz jailkit-2.19.tar.gz \
-&& cd jailkit-2.19 \
+&& wget http://olivier.sessink.nl/jailkit/jailkit-2.22.tar.gz \
+&& tar xvfz jailkit-2.22.tar.gz \
+&& cd jailkit-2.22 \
 && echo 5 > debian/compat \
 && ./debian/rules binary \
 && cd /tmp \
-&& rm -rf jailkit-2.19*
+&& rm -rf jailkit-2.22*
 
 # --- 21 Install fail2ban
 RUN apt-get -y install fail2ban
@@ -178,23 +178,24 @@ RUN echo "ignoreregex =" >> /etc/fail2ban/filter.d/postfix-sasl.conf
 #RUN service fail2ban restart
 
 # --- 22 UFW firewall
-RUN apt-get install ufw
+RUN apt-get -y install ufw
 
 # --- 23 Install RoundCube
-RUN service mysql start && apt-get -y install roundcube roundcube-core roundcube-mysql roundcube-plugins
+RUN service mariadb start && apt-get -y install roundcube roundcube-core roundcube-mysql roundcube-plugins
 ADD ./etc/apache2/conf-enabled/roundcube.conf /etc/apache2/conf-enabled/roundcube.conf
 ADD ./etc/roundcube/config.inc.php /etc/roundcube/config.inc.php
 RUN service apache2 restart
 
 # --- 24 Install ISPConfig 3
 RUN cd /tmp \
-&& wget -O ISPConfig-3.1-dev.tar.gz https://ispconfig.org/downloads/ISPConfig-3.2.5.tar.gz \
-&& tar xfz ISPConfig-3.1-dev.tar.gz \
-&& mv ispconfig3-stable-3.1* ispconfig3_install
+&& wget -O ISPConfig-3.2.5.tar.gz https://ispconfig.org/downloads/ISPConfig-3.2.5.tar.gz \
+&& tar xfz ISPConfig-3.2.5.tar.gz 
+#\
+#&& mv ispconfig3-stable-3.2* ispconfig3_install
 
 # Install ISPConfig
 ADD ./autoinstall.ini /tmp/ispconfig3_install/install/autoinstall.ini
-RUN service mysql restart && php -q /tmp/ispconfig3_install/install/install.php --autoinstall=/tmp/ispconfig3_install/install/autoinstall.ini
+RUN service mariadb restart && php -q /tmp/ispconfig3_install/install/install.php --autoinstall=/tmp/ispconfig3_install/install/autoinstall.ini
 RUN sed -i 's/^NameVirtualHost/#NameVirtualHost/g' /etc/apache2/sites-enabled/000-ispconfig.vhost && sed -i 's/^NameVirtualHost/#NameVirtualHost/g' /etc/apache2/sites-enabled/000-ispconfig.conf
 
 ADD ./etc/postfix/master.cf /etc/postfix/master.cf
@@ -216,7 +217,7 @@ RUN mv /bin/systemctl /bin/systemctloriginal
 ADD ./bin/systemctl /bin/systemctl
 RUN mkdir -p /var/backup/sql
 
-RUN service mysql start \
+RUN service mariadb start \
 && echo "FLUSH PRIVILEGES;" | mysql -u root
 
 
