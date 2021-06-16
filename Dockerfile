@@ -20,7 +20,7 @@
 # https://www.howtoforge.com/tutorial/perfect-server-ubuntu-18.04-with-apache-php-myqsl-pureftpd-bind-postfix-doveot-and-ispconfig/3/
 #
 
-FROM debian:testing-slim
+FROM debian:testing
 
 MAINTAINER mmtnrw <info@mmt.nrw> version: 0.1
 
