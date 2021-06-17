@@ -132,7 +132,7 @@ ADD ./etc/roundcube/config.inc.php /etc/roundcube/config.inc.php
 RUN service apache2 restart
 
 # --- 24 Install ISPConfig 3
-RUN cd /tmp \
+RUN cd /root \
 && wget -O ISPConfig-3.2.5.tar.gz https://ispconfig.org/downloads/ISPConfig-3.2.5.tar.gz \
 && tar xfz ISPConfig-3.2.5.tar.gz 
 #\
@@ -166,8 +166,9 @@ RUN mkdir -p /var/backup/sql
 RUN service mysql start \
 && echo "FLUSH PRIVILEGES;" | mysql -u root
 
+RUN apt-get autoremove -y && apt-get clean && rm -rf /tmp/*
 
-VOLUME ["/var/www/","/var/mail/","/var/backup/","/var/lib/mysql","/etc/","/usr/local/ispconfig/","/var/log/","/var/www/apps/"]
+VOLUME ["/var/www/","/var/mail/","/var/backup/","/var/lib/mysql","/var/log/"]
 
 # Must use double quotes for json formatting.
 CMD ["/usr/bin/supervisord", "--configuration=/etc/supervisor/supervisord.conf"]
