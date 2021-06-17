@@ -1,26 +1,4 @@
-#
-#                    ##        .
-#              ## ## ##       ==
-#           ## ## ## ##      ===
-#       /""""""""""""""""\___/ ===
-#  ~~~ {~~ ~~~~ ~~~ ~~~~ ~~ ~ /  ===- ~~~
-#       \______ o          __/
-#         \    \        __/
-#          \____\______/
-#
-#          |          |
-#       __ |  __   __ | _  __   _
-#      /  \| /  \ /   |/  / _\ |
-#      \__/| \__/ \__ |\_ \__  |
-#
-#
-# Ubuntu 18.04, Apache, PHP, MySQL, PureFTPD, BIND, Postfix, Dovecot, Roundcube and ISPConfig 3.1
-#
-# Link Referência 
-# https://www.howtoforge.com/tutorial/perfect-server-ubuntu-18.04-with-apache-php-myqsl-pureftpd-bind-postfix-doveot-and-ispconfig/3/
-#
-
-FROM debian:testing
+FROM debian:buster
 
 MAINTAINER mmtnrw <info@mmt.nrw> version: 0.1
 
@@ -54,10 +32,6 @@ RUN apt-get -y install ntp ntpdate
 RUN echo -n "Removing Sendmail... "	service sendmail stop hide_output update-rc.d -f sendmail remove apt_remove sendmail
 
 # --- 7 Install Postfix, Dovecot, MySQL, phpMyAdmin, rkhunter, binutils
-#RUN echo 'mysql-server mysql-server/root_password password pass' | debconf-set-selections \
-#&& echo 'mysql-server mysql-server/root_password_again password pass' | debconf-set-selections \
-#&& echo 'mariadb-server mariadb-server/root_password password pass' | debconf-set-selections \
-#&& echo 'mariadb-server mariadb-server/root_password_again password pass' | debconf-set-selections
 RUN echo "mariadb-server  mariadb-server/root_password_again password pass" | debconf-set-selections
 RUN echo "mariadb-server  mariadb-server/root_password password pass" | debconf-set-selections
 RUN echo "mariadb-server-10.0 mysql-server/root_password password pass" | debconf-set-selections
@@ -65,7 +39,7 @@ RUN echo "mariadb-server-10.0 mysql-server/root_password_again password pass" | 
 RUN echo -n "Installing SMTP Mail server (Postfix)... " \
 && echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections \
 && echo "postfix postfix/mailname string mail.mmt.nrw" | debconf-set-selections
-RUN apt-get -y install postfix postfix-mysql postfix-doc mariadb-client mariadb-server openssl getmail rkhunter binutils dovecot-imapd dovecot-pop3d dovecot-mysql dovecot-sieve dovecot-lmtpd sudo
+RUN apt-get -y install postfix postfix-mysql postfix-doc mariadb-client mariadb-server openssl getmail4 rkhunter binutils dovecot-imapd dovecot-pop3d dovecot-mysql dovecot-sieve dovecot-lmtpd sudo curl
 ADD ./etc/postfix/master.cf /etc/postfix/master.cf
 RUN mv /etc/mysql/mariadb.conf.d/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf.backup
 ADD ./etc/mysql/mariadb.conf.d/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
@@ -77,7 +51,7 @@ RUN mkdir -p /etc/systemd/system/mysql.service.d/
 ADD ./etc/systemd/system/mysql.service.d/limits.conf /etc/systemd/system/mysql.service.d/limits.conf
 
 # --- 9 Install Amavisd-new, SpamAssassin And Clamav
-RUN apt-get -y install amavisd-new spamassassin clamav clamav-daemon unzip bzip2 arj nomarch lzop cabextract apt-listchanges libnet-ldap-perl libauthen-sasl-perl clamav-docs daemon libio-string-perl libio-socket-ssl-perl libnet-ident-perl zip libnet-dns-perl postgrey
+RUN apt-get -y install amavisd-new spamassassin clamav clamav-daemon unzip bzip2 arj nomarch lzop cabextract p7zip p7zip-full lrzip apt-listchanges libnet-ldap-perl libauthen-sasl-perl clamav-docs daemon libio-string-perl libio-socket-ssl-perl libnet-ident-perl zip libnet-dns-perl libdbd-mysql-perl postgrey
 ADD ./etc/clamav/clamd.conf /etc/clamav/clamd.conf
 RUN service spamassassin stop && systemctl disable spamassassin
 RUN update-rc.d -f spamassassin remove
@@ -107,16 +81,16 @@ RUN echo 'phpmyadmin phpmyadmin/dbconfig-install boolean true' | debconf-set-sel
 #RUN a2enconf httpoxy
 #RUN echo "ServerName localhost" | sudo tee /etc/apache2/conf-available/servername.conf
 #RUN sudo a2enconf servername
-RUN echo $(grep $(hostname) /etc/hosts | cut -f1) localhost >> /etc/hosts && apt-get -y install apache2 apache2-doc apache2-utils libapache2-mod-php php7.4 php7.4-common php7.4-gd php7.4-mysql php7.4-imap phpmyadmin php7.4-cli php7.4-cgi libapache2-mod-fcgid apache2-suexec-pristine php-pear mcrypt  imagemagick libruby libapache2-mod-python php7.4-curl php7.4-intl php7.4-pspell php7.4-sqlite3 php7.4-tidy php7.4-xmlrpc php7.4-xsl memcached php-memcache php-imagick php7.4-zip php7.4-mbstring php-soap php7.4-soap
+RUN echo $(grep $(hostname) /etc/hosts | cut -f1) localhost >> /etc/hosts && apt-get -y install apache2 apache2-doc apache2-utils libapache2-mod-php php7.3 php7.3-common php7.3-gd php7.3-mysql php7.3-imap php7.3-cli php7.3-cgi libapache2-mod-fcgid apache2-suexec-pristine php-pear mcrypt  imagemagick libruby libapache2-mod-python php7.3-curl php7.3-intl php7.3-pspell php7.3-recode php7.3-sqlite3 php7.3-tidy php7.3-xmlrpc php7.3-xsl memcached php-memcache php-imagick php-gettext php7.3-zip php7.3-mbstring memcached libapache2-mod-passenger php7.3-soap php7.3-fpm php7.3-opcache php-apcu libapache2-reload-perl
 RUN echo "ServerName localhost" > /etc/apache2/conf-available/servername.conf && a2enconf servername
 ADD ./etc/apache2/conf-available/httpoxy.conf /etc/apache2/conf-available/httpoxy.conf
 RUN a2enmod suexec rewrite ssl actions include dav_fs dav auth_digest cgi headers && a2enconf httpoxy && a2dissite 000-default && service apache2 restart
 
 # --- 12 PHP Opcode cache
-RUN apt-get -y install php7.4-opcache php-apcu
+RUN apt-get -y install php7.3-opcache php-apcu
 
 # --- 13 PHP-FPM
-RUN apt-get -y install php7.4-fpm
+RUN apt-get -y install php7.3-fpm
 RUN a2enmod actions proxy_fcgi alias 
 RUN service apache2 restart
 
@@ -129,13 +103,13 @@ RUN service apache2 restart
 RUN apt-get -y install python3-certbot-apache
 
 # --- 16 Install Mailman
-#RUN echo 'mailman mailman/default_server_language en' | debconf-set-selections
-#RUN apt-get -y install mailman
-#ADD ./etc/aliases /etc/aliases
-#RUN newaliases
-#RUN service postfix restart
-#RUN ln -s /etc/mailman/apache.conf /etc/apache2/conf-enabled/mailman.conf
-#RUN service apache2 restart
+RUN echo 'mailman mailman/default_server_language en' | debconf-set-selections
+RUN apt-get -y install mailman
+ADD ./etc/aliases /etc/aliases
+RUN newaliases
+RUN service postfix restart
+RUN ln -s /etc/mailman/apache.conf /etc/apache2/conf-enabled/mailman.conf
+RUN service apache2 restart
 
 # --- 17 Install PureFTPd and Quota
 RUN apt-get -y install pure-ftpd-common pure-ftpd-mysql quota quotatool
@@ -155,8 +129,8 @@ RUN systemctl enable haveged
 #RUN systemctl start haveged
 
 # --- 19 Install Vlogger, Webalizer, and AWStats
-#RUN apt-get -y install vlogger webalizer awstats geoip-database libclass-dbi-mysql-perl
-#ADD etc/cron.d/awstats /etc/cron.d/
+RUN apt-get -y install webalizer awstats geoip-database libclass-dbi-mysql-perl libtimedate-perl
+ADD etc/cron.d/awstats /etc/cron.d/
 
 # --- 20 Install Jailkit
 RUN apt-get -y install build-essential autoconf automake libtool flex bison debhelper binutils python
@@ -181,7 +155,7 @@ RUN echo "ignoreregex =" >> /etc/fail2ban/filter.d/postfix-sasl.conf
 RUN apt-get -y install ufw
 
 # --- 23 Install RoundCube
-RUN service mariadb start && apt-get -y install roundcube roundcube-core roundcube-mysql roundcube-plugins
+RUN service mysql start && apt-get -y install roundcube roundcube-core roundcube-mysql roundcube-plugins
 ADD ./etc/apache2/conf-enabled/roundcube.conf /etc/apache2/conf-enabled/roundcube.conf
 ADD ./etc/roundcube/config.inc.php /etc/roundcube/config.inc.php
 RUN service apache2 restart
@@ -195,7 +169,7 @@ RUN cd /tmp \
 
 # Install ISPConfig
 ADD ./autoinstall.ini /tmp/ispconfig3_install/install/autoinstall.ini
-RUN service mariadb restart && php -q /tmp/ispconfig3_install/install/install.php --autoinstall=/tmp/ispconfig3_install/install/autoinstall.ini
+RUN service mysql restart && php -q /tmp/ispconfig3_install/install/install.php --autoinstall=/tmp/ispconfig3_install/install/autoinstall.ini
 RUN sed -i 's/^NameVirtualHost/#NameVirtualHost/g' /etc/apache2/sites-enabled/000-ispconfig.vhost && sed -i 's/^NameVirtualHost/#NameVirtualHost/g' /etc/apache2/sites-enabled/000-ispconfig.conf
 
 ADD ./etc/postfix/master.cf /etc/postfix/master.cf
@@ -217,7 +191,7 @@ RUN mv /bin/systemctl /bin/systemctloriginal
 ADD ./bin/systemctl /bin/systemctl
 RUN mkdir -p /var/backup/sql
 
-RUN service mariadb start \
+RUN service mysql start \
 && echo "FLUSH PRIVILEGES;" | mysql -u root
 
 
