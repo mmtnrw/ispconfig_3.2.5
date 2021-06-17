@@ -59,7 +59,7 @@ RUN update-rc.d -f spamassassin remove
 #RUN service clamav-daemon start
 # --- Erro amavisd-new
 #RUN wget https://git.ispconfig.org/ispconfig/ispconfig3/raw/stable-3.1/helper_scripts/ubuntu-amavisd-new-2.11.patch -P /tmp
-RUN cd /usr/sbin
+#RUN cd /usr/sbin
 #RUN cp -pf amavisd-new amavisd-new_bak 
 #RUN patch < /tmp/ubuntu-amavisd-new-2.11.patch
 
@@ -84,15 +84,15 @@ RUN echo 'phpmyadmin phpmyadmin/dbconfig-install boolean true' | debconf-set-sel
 RUN echo $(grep $(hostname) /etc/hosts | cut -f1) localhost >> /etc/hosts && apt-get -y install apache2 apache2-doc apache2-utils libapache2-mod-php php7.3 php7.3-common php7.3-gd php7.3-mysql php7.3-imap php7.3-cli php7.3-cgi libapache2-mod-fcgid apache2-suexec-pristine php-pear mcrypt  imagemagick libruby libapache2-mod-python php7.3-curl php7.3-intl php7.3-pspell php7.3-recode php7.3-sqlite3 php7.3-tidy php7.3-xmlrpc php7.3-xsl memcached php-memcache php-imagick php-gettext php7.3-zip php7.3-mbstring memcached libapache2-mod-passenger php7.3-soap php7.3-fpm php7.3-opcache php-apcu libapache2-reload-perl
 RUN echo "ServerName localhost" > /etc/apache2/conf-available/servername.conf && a2enconf servername
 ADD ./etc/apache2/conf-available/httpoxy.conf /etc/apache2/conf-available/httpoxy.conf
-RUN a2enmod suexec rewrite ssl actions include dav_fs dav auth_digest cgi headers && a2enconf httpoxy && a2dissite 000-default && service apache2 restart
+RUN a2enmod suexec rewrite ssl actions include dav_fs dav auth_digest cgi headers actions proxy_fcgi alias && a2enconf httpoxy && a2dissite 000-default && service apache2 restart
 
 # --- 12 PHP Opcode cache
 RUN apt-get -y install php7.3-opcache php-apcu
 
 # --- 13 PHP-FPM
-RUN apt-get -y install php7.3-fpm
-RUN a2enmod actions proxy_fcgi alias 
-RUN service apache2 restart
+#RUN apt-get -y install php7.3-fpm
+#RUN a2enmod actions proxy_fcgi alias 
+#RUN service apache2 restart
 
 # --- 14 Install HHVM (HipHop Virtual Machine)
 #RUN apt-get -y install hhvm
