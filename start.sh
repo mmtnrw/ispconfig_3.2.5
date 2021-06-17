@@ -14,6 +14,8 @@ if [ ! -z "$COUNTRY" ]; then
 fi
 if [ ! -z "$HOSTNAME" ]; then
 	sed -i "s/^hostname=server1.example.com$/hostname=$HOSTNAME/g" /tmp/ispconfig3_install/install/autoinstall.ini
+	sed -i "s/^ssl_cert_common_name=server1.example.com$/ssl_cert_common_name=$HOSTNAME/g" /tmp/ispconfig3_install/install/autoinstall.ini
+	sed -i "s/^ssl_cert_email=hostmaster@example.com$/ssl_cert_email=hostmaster@$HOSTNAME/g" /tmp/ispconfig3_install/install/autoinstall.ini
 fi
 if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 	mysql_install_db
