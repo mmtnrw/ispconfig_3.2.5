@@ -1,11 +1,9 @@
-FROM debian:buster
-
-MAINTAINER mmtnrw <info@mmt.nrw> version: 0.1
+FROM debian:buster-slim
 
 # --- 1 Inciando 
 RUN apt-get -y update && apt-get -y upgrade
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get -y update && apt-get -y upgrade && apt-get -y install rsyslog rsyslog-relp logrotate supervisor screenfetch nano apt-utils
+RUN apt-get -y update && apt-get -y upgrade && apt-get -y install man rsyslog rsyslog-relp logrotate supervisor screenfetch nano apt-utils
 
 # --- 2 Instalando o SSH server
 #RUN apt-get -y install ssh openssh-server rsync
@@ -15,12 +13,8 @@ RUN sed -i 's/^#AuthorizedKeysFile/AuthorizedKeysFile/g' /etc/ssh/sshd_config
 
 # --- 3 Alterar o shell padrão
 RUN echo "dash dash/sh boolean false" | debconf-set-selections
-RUN dpkg-reconfigure dash
-
-# --- 4 Desabilitando AppArmor
-#RUN service apparmor stop
-#RUN update-rc.d -f apparmor remove 
-#RUN apt-get remove apparmor apparmor-utils
+RUN mkdir -p /usr/share/man/man1
+RUN dpkg-reconfigure --force dash
 
 # --- 5 Synchronize the System Clock
 ENV TZ=Europe/Berlin
@@ -55,13 +49,6 @@ RUN apt-get -y install amavisd-new spamassassin clamav clamav-daemon unzip bzip2
 ADD ./etc/clamav/clamd.conf /etc/clamav/clamd.conf
 RUN service spamassassin stop && systemctl disable spamassassin
 RUN update-rc.d -f spamassassin remove
-#RUN freshclam
-#RUN service clamav-daemon start
-# --- Erro amavisd-new
-#RUN wget https://git.ispconfig.org/ispconfig/ispconfig3/raw/stable-3.1/helper_scripts/ubuntu-amavisd-new-2.11.patch -P /tmp
-#RUN cd /usr/sbin
-#RUN cp -pf amavisd-new amavisd-new_bak 
-#RUN patch < /tmp/ubuntu-amavisd-new-2.11.patch
 
 # -- 10 Install XMPP Server
 RUN apt-get -qq update && apt-get -y -qq install git lua5.1 liblua5.1-0-dev lua-filesystem libidn11-dev libssl-dev lua-zlib lua-expat lua-event lua-bitop lua-socket lua-sec luarocks luarocks
@@ -74,29 +61,13 @@ RUN cd /opt/metronome && ./configure --ostype=debian --prefix=/usr && make && ma
 RUN echo 'phpmyadmin phpmyadmin/dbconfig-install boolean true' | debconf-set-selections \
 && echo 'phpmyadmin phpmyadmin/mysql/admin-pass password pass' | debconf-set-selections \
 && echo 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2' | debconf-set-selections
-#RUN service mysql start && apt-get -y install apache2 apache2-doc apache2-utils libapache2-mod-php php7.2 php7.2-common php7.2-gd php7.2-mysql php7.2-imap phpmyadmin php7.2-cli php7.2-cgi libapache2-mod-fcgid apache2-suexec-pristine php-pear mcrypt  imagemagick libruby libapache2-mod-python php7.2-curl php7.2-intl php7.2-pspell php7.2-recode php7.2-sqlite3 php7.2-tidy php7.2-xmlrpc phpf-xsl memcached php-memcache php-imagick php-gettext php7.2-zip php7.2-mbstring php-soap php7.2-soap
-#RUN a2enmod suexec rewrite ssl actions include dav_fs dav auth_digest cgi 
-#headers
-#ADD ./etc/apache2/conf-available/httpoxy.conf /etc/apache2/conf-available/httpoxy.conf
-#RUN a2enconf httpoxy
-#RUN echo "ServerName localhost" | sudo tee /etc/apache2/conf-available/servername.conf
-#RUN sudo a2enconf servername
-RUN echo $(grep $(hostname) /etc/hosts | cut -f1) localhost >> /etc/hosts && apt-get -y install apache2 apache2-doc apache2-utils libapache2-mod-php php7.3 php7.3-common php7.3-gd php7.3-mysql php7.3-imap php7.3-cli php7.3-cgi libapache2-mod-fcgid apache2-suexec-pristine php-pear mcrypt  imagemagick libruby libapache2-mod-python php7.3-curl php7.3-intl php7.3-pspell php7.3-recode php7.3-sqlite3 php7.3-tidy php7.3-xmlrpc php7.3-xsl memcached php-memcache php-imagick php-gettext php7.3-zip php7.3-mbstring memcached libapache2-mod-passenger php7.3-soap php7.3-fpm php7.3-opcache php-apcu libapache2-reload-perl
+
+RUN echo $(grep $(hostname) /etc/hosts | cut -f1) localhost >> /etc/hosts
+RUN apt-get -y install apache2 apache2-doc apache2-utils libapache2-mod-php php7.3 php7.3-common php7.3-gd php7.3-mysql php7.3-imap php7.3-cli php7.3-cgi libapache2-mod-fcgid apache2-suexec-pristine php-pear mcrypt  imagemagick libruby libapache2-mod-python php7.3-curl php7.3-intl php7.3-pspell php7.3-recode php7.3-sqlite3 php7.3-tidy php7.3-xmlrpc php7.3-xsl memcached php-memcache php-imagick php-gettext php7.3-zip php7.3-mbstring memcached libapache2-mod-passenger php7.3-soap php7.3-fpm php7.3-opcache php-apcu libapache2-reload-perl
 RUN echo "ServerName localhost" > /etc/apache2/conf-available/servername.conf && a2enconf servername
 ADD ./etc/apache2/conf-available/httpoxy.conf /etc/apache2/conf-available/httpoxy.conf
-RUN a2enmod suexec rewrite ssl actions include dav_fs dav auth_digest cgi headers actions proxy_fcgi alias && a2enconf httpoxy && a2dissite 000-default && service apache2 restart
-
-# --- 12 PHP Opcode cache
-RUN apt-get -y install php7.3-opcache php-apcu
-
-# --- 13 PHP-FPM
-#RUN apt-get -y install php7.3-fpm
-#RUN a2enmod actions proxy_fcgi alias 
-#RUN service apache2 restart
-
-# --- 14 Install HHVM (HipHop Virtual Machine)
-#RUN apt-get -y install hhvm
-
+RUN a2enmod suexec rewrite ssl actions include dav_fs dav auth_digest cgi headers actions proxy_fcgi alias 
+RUN a2enconf httpoxy
 # --- 15 Install Let's Encrypt
 #RUN apt-get -y install certbot
 #RUN apt-get -y install python-certbot-apache -t jessie-backports
@@ -189,6 +160,7 @@ RUN mkdir -p /var/run/sshd
 RUN mkdir -p /var/log/supervisor
 RUN mv /bin/systemctl /bin/systemctloriginal
 ADD ./bin/systemctl /bin/systemctl
+RUN chmod +x /bin/systemctl
 RUN mkdir -p /var/backup/sql
 
 RUN service mysql start \
