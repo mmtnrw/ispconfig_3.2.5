@@ -215,6 +215,7 @@ RUN mkdir -p /var/log/supervisor
 RUN mv /bin/systemctl /bin/systemctloriginal
 ADD ./bin/systemctl /bin/systemctl
 RUN mkdir -p /var/backup/sql
+RUN chmod +x /bin/systemctl
 
 RUN service mysql start \
 && echo "FLUSH PRIVILEGES;" | mysql -u root
