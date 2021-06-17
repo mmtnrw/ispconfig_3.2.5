@@ -139,7 +139,7 @@ RUN cd /root \
 #&& mv ispconfig3-stable-3.2* ispconfig3_install
 
 ## Install ISPConfig
-#ADD ./autoinstall.ini /tmp/ispconfig3_install/install/autoinstall.ini
+ADD ./autoinstall.ini /root/ispconfig3_install/install/autoinstall.ini
 #RUN service mysql restart && php -q /tmp/ispconfig3_install/install/install.php --autoinstall=/tmp/ispconfig3_install/install/autoinstall.ini
 #RUN sed -i 's/^NameVirtualHost/#NameVirtualHost/g' /etc/apache2/sites-enabled/000-ispconfig.vhost && sed -i 's/^NameVirtualHost/#NameVirtualHost/g' /etc/apache2/sites-enabled/000-ispconfig.conf
 
