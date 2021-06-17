@@ -15,6 +15,10 @@ fi
 if [ ! -z "$HOSTNAME" ]; then
 	sed -i "s/^hostname=server1.example.com$/hostname=$HOSTNAME/g" /tmp/ispconfig3_install/install/autoinstall.ini
 fi
+if [ ! -z "$PASSWORD" ]; then
+	service mysql start \
+	&& echo "USE dbispconfig;UPDATE sys_user SET passwort = PASSWORD('$PASSWORD') WHERE username = 'admin';" | mysql -u root
+fi
 if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 	mysql_install_db
 	service mysql start \
@@ -28,14 +32,12 @@ if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 	sed -i "s/^hostname=server1.example.com$/hostname=$HOSTNAME/g" /root/ispconfig3_install/install/autoinstall.ini
 	# RUN mysqladmin -u root password pass
 	service mysql start && php -q /tmp/ispconfig3_install/install/install.php --autoinstall=/tmp/ispconfig3_install/install/autoinstall.ini
-	#cd /tmp/ispconfig3_install/install && php -q /tmp/ispconfig3_install/install/update.php --autoinstall=/tmp/ispconfig3_install/install/autoinstall.ini
 	mkdir /var/www/html
 	echo "" > /var/www/html/index.html
 	rm -r /root/ispconfig3_install
 fi
 
 service mysql start && php -q /tmp/ispconfig3_install/install/install.php --autoinstall=/tmp/ispconfig3_install/install/autoinstall.ini
-#cd /tmp/ispconfig3_install/install && php -q /tmp/ispconfig3_install/install/update.php --autoinstall=/tmp/ispconfig3_install/install/autoinstall.ini
 
 screenfetch
 
