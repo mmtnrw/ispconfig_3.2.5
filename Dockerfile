@@ -74,7 +74,7 @@ RUN a2enconf httpoxy
 RUN apt-get -y install python3-certbot-apache
 
 # --- 16 Install Mailman
-RUN echo 'mailman mailman/default_server_language en' | debconf-set-selections
+RUN echo 'mailman mailman/default_server_language select en' | debconf-set-selections
 RUN apt-get -y install mailman
 ADD ./etc/aliases /etc/aliases
 RUN newaliases
