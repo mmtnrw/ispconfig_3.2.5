@@ -37,7 +37,7 @@ fi
 
 if [ ! -z "$PASSWORD" ]; then
 	service mysql start \
-	&& echo "USE dbispconfig;UPDATE sys_user SET passwort = md5('$PASSWORD') WHERE username = 'admin';" | mysql -u root
+	&& echo "USE dbispconfig;UPDATE sys_user SET passwort = md5('$PASSWORD') WHERE username = 'admin';" | mysql -u root -ppass
 fi
 
 screenfetch
