@@ -83,16 +83,29 @@ RUN ln -s /etc/mailman/apache.conf /etc/apache2/conf-enabled/mailman.conf
 RUN service apache2 restart
 
 # --- 17 Install PureFTPd and Quota
-RUN apt-get -y install pure-ftpd-common pure-ftpd-mysql quota quotatool
+# install package building helpers
+RUN apt-get -qq -y --force-yes install dpkg-dev debhelper openbsd-inetd debian-keyring
+# install dependancies
+RUN apt-get -y -qq build-dep pure-ftpd
+# build from source
+RUN mkdir /tmp/pure-ftpd-mysql/ && \
+    cd /tmp/pure-ftpd-mysql/ && \
+    apt-get -qq source pure-ftpd-mysql && \
+    cd pure-ftpd-* && \
+    sed -i '/^optflags=/ s/$/ --without-capabilities/g' ./debian/rules && \
+    dpkg-buildpackage -b -uc > /tmp/pureftpd-build-stdout.txt 2> /tmp/pureftpd-build-stderr.txt
+# install the new deb files
+RUN dpkg -i /tmp/pure-ftpd-mysql/pure-ftpd-common*.deb && dpkg -i /tmp/pure-ftpd-mysql/pure-ftpd-mysql*.deb
+# Prevent pure-ftpd upgrading
+RUN apt-mark hold pure-ftpd-common pure-ftpd-mysql
+# setup ftpgroup and ftpuser
+RUN groupadd ftpgroup && useradd -g ftpgroup -d /dev/null -s /etc ftpuser
+RUN apt-get -qq update && apt-get -y -qq install quota quotatool
 RUN sed -i 's/VIRTUALCHROOT=false/VIRTUALCHROOT=true/g'  /etc/default/pure-ftpd-common
 RUN sed -i 's/STANDALONE_OR_INETD=inetd/STANDALONE_OR_INETD=standalone/g'  /etc/default/pure-ftpd-common
 RUN sed -i 's/UPLOADSCRIPT=/UPLOADSCRIPT=\/etc\/pure-ftpd\/clamav_check.sh/g'  /etc/default/pure-ftpd-common
-ADD ./etc/pure-ftpd/clamav_check.sh /etc/pure-ftpd/clamav_check.sh
-RUN echo 2 > /etc/pure-ftpd/conf/TLS
-RUN echo 1 > /etc/pure-ftpd/conf/CallUploadScript
-RUN mkdir -p /etc/ssl/private/
-RUN openssl req -x509 -nodes -days 7300 -newkey rsa:2048 -subj "/C=DE/ST=Karlsruhe/L=Baden-Wuerttemberg/O=IT/CN=$HOSTNAME" -keyout /etc/ssl/private/pure-ftpd.pem -out /etc/ssl/private/pure-ftpd.pem
-RUN chmod 600 /etc/ssl/private/pure-ftpd.pem
+RUN echo 1 > /etc/pure-ftpd/conf/TLS && mkdir -p /etc/ssl/private/
+
 
 # --- 18 Install BIND DNS Server
 RUN apt-get -y install bind9 dnsutils haveged
