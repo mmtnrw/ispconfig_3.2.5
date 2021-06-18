@@ -84,6 +84,8 @@ RUN service apache2 restart
 
 # --- 17 Install PureFTPd and Quota
 # install package building helpers
+RUN echo 'deb-src http://deb.debian.org/debian buster main' >> /etc/apt/sources.list
+RUN apt-get update
 RUN apt-get -qq -y --force-yes install dpkg-dev debhelper openbsd-inetd debian-keyring
 # install dependancies
 RUN apt-get -y -qq build-dep pure-ftpd
