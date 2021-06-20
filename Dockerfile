@@ -142,7 +142,7 @@ RUN echo "ignoreregex =" >> /etc/fail2ban/filter.d/postfix-sasl.conf
 RUN apt-get -y install ufw
 
 # --- 23 Install RoundCube
-RUN service mysql start && apt-get -y install roundcube roundcube-core roundcube-mysql roundcube-plugins
+RUN apt-get -y install roundcube roundcube-core roundcube-mysql roundcube-plugins
 ADD ./etc/apache2/conf-enabled/roundcube.conf /etc/apache2/conf-enabled/roundcube.conf
 ADD ./etc/roundcube/config.inc.php /etc/roundcube/config.inc.php
 RUN service apache2 restart
@@ -179,12 +179,15 @@ ADD ./bin/systemctl /bin/systemctl
 RUN chmod +x /bin/systemctl
 RUN mkdir -p /var/backup/sql
 
-RUN service mysql start \
-&& echo "FLUSH PRIVILEGES;" | mysql -u root
+#RUN service mysql start \
+#&& echo "FLUSH PRIVILEGES;" | mysql -u root
+
+RUN mkdir -p /usr/local/ispconfig
+RUN sed -i "s/isdir\(\/usr\/local\/ispconfig/isdir\(\/usr\/local\/ispconfigi/g" /root/ispconfig3_install/install/install.php
 
 RUN apt-get autoremove -y && apt-get clean && rm -rf /tmp/*
 
-VOLUME ["/var/www/","/var/mail/","/var/backup/","/etc/letsencrypt" ]
+VOLUME ["/var/www/","/var/mail/","/var/backup/","/etc/letsencrypt", "/usr/local/ispconfig" ]
 
 # Must use double quotes for json formatting.
 CMD ["/usr/bin/supervisord", "--configuration=/etc/supervisor/supervisord.conf"]
