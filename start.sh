@@ -24,6 +24,10 @@ if [ ! -z "$ISPC_MYSQL_PASS" ]; then
 	sed -i "s/^mysql_root_password=pass$/mysql_root_password=$ISPC_MYSQL_PASS/g" /root/ispconfig3_install/install/autoinstall.ini
 fi
 
+while [ "$opened"  == "0" ]; do
+  nc -vz localhost 3306
+done
+
 
 if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 #	mysql_install_db
