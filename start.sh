@@ -48,9 +48,7 @@ fi
 DB_PASS=`cat /usr/local/ispconfig/server/lib/config.inc.php|grep db_password|head -n1|cut -d "'" -f4`
 echo $DB_PASS
 echo "GRANT USAGE ON *.* TO 'ispconfig'@'%' IDENTIFIED BY '$DB_PASS';"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
-echo "Hier stimmt was nicht"
 echo "GRANT ALL PRIVILEGES ON dbispconfig.* TO 'ispconfig'@'%';"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
-echo "Hier auch nicht"
 echo "DROP USER IF EXISTS 'ispconfig'@'server.mmt.nrw';"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
 echo "FLUSH PRIVILEGES;"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
 
