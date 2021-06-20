@@ -39,7 +39,7 @@ if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 	php -q /root/ispconfig3_install/install/install.php --autoinstall=/root/ispconfig3_install/install/autoinstall.ini
 	mkdir -p /var/www/html
 	echo "" > /var/www/html/index.html
-	rm -r /root/ispconfig3_install
+#	rm -r /root/ispconfig3_install
 else
 	php -q /root/ispconfig3_install/install/update.php --autoinstall=/root/ispconfig3_install/install/autoinstall.ini
 fi
