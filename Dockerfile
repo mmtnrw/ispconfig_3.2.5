@@ -183,7 +183,7 @@ RUN mkdir -p /var/backup/sql
 #&& echo "FLUSH PRIVILEGES;" | mysql -u root
 
 RUN mkdir -p /usr/local/ispconfig
-RUN sed -i "s/isdir\(\/usr\/local\/ispconfig/isdir\(\/usr\/local\/ispconfigi/g" /root/ispconfig3_install/install/install.php
+RUN sed -i "s/isdir(\/usr\/local\/ispconfig/isdir(\/usr\/local\/ispconfigi/g" /root/ispconfig3_install/install/install.php
 
 RUN apt-get autoremove -y && apt-get clean && rm -rf /tmp/*
 
