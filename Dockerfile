@@ -178,7 +178,6 @@ RUN mv /bin/systemctl /bin/systemctloriginal
 ADD ./bin/systemctl /bin/systemctl
 RUN chmod +x /bin/systemctl
 RUN mkdir -p /var/backup/sql
-RUN mkdir -p /usr/local/ispconfig
 
 RUN service mysql start \
 && echo "FLUSH PRIVILEGES;" | mysql -u root
