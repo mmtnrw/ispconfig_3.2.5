@@ -10,7 +10,7 @@ if [ ! -z "$ISPC_LANGUAGE" ]; then
 	sed -i "s/^language=en$/language=$ISPC_LANGUAGE/g" /root/ispconfig3_install/install/autoinstall.ini
 fi
 if [ ! -z "$ISPC_COUNTRY" ]; then
-	sed -i "s/^ssl_cert_country=AU$/ssl_cert_country=$COUNTRY/g" /root/ispconfig3_install/install/autoinstall.ini
+	sed -i "s/^ssl_cert_country=AU$/ssl_cert_country=$ISPC_COUNTRY/g" /root/ispconfig3_install/install/autoinstall.ini
 fi
 if [ ! -z "$ISPC_HOSTNAME" ]; then
 	sed -i "s/^hostname=server1.example.com$/hostname=$ISPC_HOSTNAME/g" /root/ispconfig3_install/install/autoinstall.ini
