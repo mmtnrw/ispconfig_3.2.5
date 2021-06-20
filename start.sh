@@ -45,7 +45,7 @@ if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 	echo "" > /var/www/html/index.html
 #	rm -r /root/ispconfig3_install
 else
-	php -q /root/ispconfig3_install/install/update.php --autoinstall=/root/ispconfig3_install/install/autoinstall.ini
+	cd  /root/ispconfig3_install/install && php -q /root/ispconfig3_install/install/update.php --autoinstall=/root/ispconfig3_install/install/autoinstall.ini
 fi
 
 ##### Databse Fixing #####
