@@ -184,7 +184,7 @@ RUN service mysql start \
 
 RUN apt-get autoremove -y && apt-get clean && rm -rf /tmp/*
 
-VOLUME ["/var/www/","/var/mail/","/var/backup/","/var/lib/mysql","/var/log/","/etc/letsencrypt", "/usr/local/ispconfig" ]
+VOLUME ["/var/www/","/var/mail/","/var/backup/","/etc/letsencrypt" ]
 
 # Must use double quotes for json formatting.
 CMD ["/usr/bin/supervisord", "--configuration=/etc/supervisor/supervisord.conf"]
