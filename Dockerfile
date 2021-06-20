@@ -178,13 +178,14 @@ RUN mv /bin/systemctl /bin/systemctloriginal
 ADD ./bin/systemctl /bin/systemctl
 RUN chmod +x /bin/systemctl
 RUN mkdir -p /var/backup/sql
+RUN mkdir -p /usr/local/ispconfig
 
 RUN service mysql start \
 && echo "FLUSH PRIVILEGES;" | mysql -u root
 
 RUN apt-get autoremove -y && apt-get clean && rm -rf /tmp/*
 
-VOLUME ["/var/www/","/var/mail/","/var/backup/","/var/lib/mysql","/var/log/"]
+VOLUME ["/var/www/","/var/mail/","/var/backup/","/var/lib/mysql","/var/log/","/etc/letsencrypt", "/usr/local/ispconfig" ]
 
 # Must use double quotes for json formatting.
 CMD ["/usr/bin/supervisord", "--configuration=/etc/supervisor/supervisord.conf"]
