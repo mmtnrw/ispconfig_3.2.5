@@ -71,6 +71,8 @@ fi
 screenfetch
 
 # Fixing that Apache Pids are overwritten
+/etc/init.d/php7.3-fpm stop
 /etc/init.d/apache2 stop
+/etc/init.d/php7.3-fpm start
 
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
