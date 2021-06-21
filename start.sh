@@ -70,4 +70,7 @@ fi
 
 screenfetch
 
+# Fixing that Apache Pids are overwritten
+/etc/init.d/apache2 stop
+
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
