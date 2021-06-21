@@ -180,6 +180,9 @@ ADD ./bin/systemctl /bin/systemctl
 RUN chmod +x /bin/systemctl
 RUN mkdir -p /var/backup/sql
 
+# Persistence of Folders
+RUN mv /etc/apache2 /etc/apache2.org
+
 #RUN service mysql start \
 #&& echo "FLUSH PRIVILEGES;" | mysql -u root
 
