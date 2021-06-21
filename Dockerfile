@@ -186,8 +186,12 @@ RUN mv /etc/apache2 /etc/apache2.org
 #RUN service mysql start \
 #&& echo "FLUSH PRIVILEGES;" | mysql -u root
 
+#Persistent Volume
 RUN mkdir -p /usr/local/ispconfig
 RUN sed -i "s/is_dir('\/usr\/local\/ispconfig/is_dir('\/usr\/local\/ispconfigi/g" /root/ispconfig3_install/install/install.php
+
+#Wait for MySQL to come up...
+RUN apt-get install -y netcat
 
 RUN apt-get autoremove -y && apt-get clean && rm -rf /tmp/*
 
