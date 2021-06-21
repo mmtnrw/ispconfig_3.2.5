@@ -187,7 +187,7 @@ RUN sed -i "s/is_dir('\/usr\/local\/ispconfig/is_dir('\/usr\/local\/ispconfigi/g
 
 RUN apt-get autoremove -y && apt-get clean && rm -rf /tmp/*
 
-VOLUME ["/var/www/","/var/mail/","/var/backup/","/etc/letsencrypt", "/usr/local/ispconfig" ]
+VOLUME ["/var/www/","/var/mail/","/var/backup/","/etc/letsencrypt", "/usr/local/ispconfig", "/etc/apache2" ]
 
 # Must use double quotes for json formatting.
 CMD ["/usr/bin/supervisord", "--configuration=/etc/supervisor/supervisord.conf"]
