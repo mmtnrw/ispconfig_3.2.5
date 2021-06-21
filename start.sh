@@ -22,7 +22,6 @@ if [ ! -z "$ISPC_MYSQL_HOST" ]; then
 	while ! nc -z $ISPC_MYSQL_HOST 3306; do   
 	  sleep 0.1 # wait for 1/10 of the second before check again
 	done
-	done
 fi
 if [ ! -z "$ISPC_MYSQL_PASS" ]; then
 	sed -i "s/^mysql_root_password=pass$/mysql_root_password=$ISPC_MYSQL_PASS/g" /root/ispconfig3_install/install/autoinstall.ini
