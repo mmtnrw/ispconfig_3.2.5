@@ -19,14 +19,14 @@ if [ ! -z "$ISPC_HOSTNAME" ]; then
 fi
 if [ ! -z "$ISPC_MYSQL_HOST" ]; then
 	sed -i "s/^mysql_hostname=localhost$/mysql_hostname=$ISPC_MYSQL_HOST/g" /root/ispconfig3_install/install/autoinstall.ini
+	while [ "$opened"  == "0" ]; do
+	  nc -vz $ISPC_MYSQL_HOST 3306
+	done
 fi
 if [ ! -z "$ISPC_MYSQL_PASS" ]; then
 	sed -i "s/^mysql_root_password=pass$/mysql_root_password=$ISPC_MYSQL_PASS/g" /root/ispconfig3_install/install/autoinstall.ini
 fi
 
-while [ "$opened"  == "0" ]; do
-  nc -vz localhost 3306
-done
 
 
 if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
@@ -40,6 +40,8 @@ if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 #	&& echo "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';" | mysql -u root \
 #	&& echo "FLUSH PRIVILEGES;" | mysql -u root
 	# RUN mysqladmin -u root password pass
+	mkdir -p /etc/apache2
+	cp -R /etc/apache2.org/* /etc/apache2
 	php -q /root/ispconfig3_install/install/install.php --autoinstall=/root/ispconfig3_install/install/autoinstall.ini
 	mkdir -p /var/www/html
 	echo "" > /var/www/html/index.html
