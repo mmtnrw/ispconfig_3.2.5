@@ -23,7 +23,8 @@ RUN apt-get -y install ntp ntpdate
 
 # --- 6 Removendo sendmail
 #RUN service sendmail stop; update-rc.d -f sendmail remove
-RUN echo -n "Removing Sendmail... "	service sendmail stop hide_output update-rc.d -f sendmail remove apt_remove sendmail
+RUN echo -n "Removing Sendmail... "
+#&& service sendmail stop hide_output update-rc.d -f sendmail remove apt_remove sendmail
 
 # --- 7 Install Postfix, Dovecot, MySQL, phpMyAdmin, rkhunter, binutils
 RUN echo "mariadb-server  mariadb-server/root_password_again password pass" | debconf-set-selections
