@@ -42,9 +42,9 @@ if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 	# RUN mysqladmin -u root password pass
 	mkdir -p /etc/apache2
 	cp -R /etc/apache2.org/* /etc/apache2
-	php -q /root/ispconfig3_install/install/install.php --autoinstall=/root/ispconfig3_install/install/autoinstall.ini
 	mkdir -p /var/www/html
 	echo "" > /var/www/html/index.html
+	php -q /root/ispconfig3_install/install/install.php --autoinstall=/root/ispconfig3_install/install/autoinstall.ini
 #	rm -r /root/ispconfig3_install
 else
 	cd  /root/ispconfig3_install/install && php -q /root/ispconfig3_install/install/update.php --autoinstall=/root/ispconfig3_install/install/autoinstall.ini
