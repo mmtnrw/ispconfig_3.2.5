@@ -19,6 +19,10 @@ if [ ! -z "$ISPC_HOSTNAME" ]; then
 fi
 if [ ! -z "$ISPC_MYSQL_HOST" ]; then
 	sed -i "s/^mysql_hostname=localhost$/mysql_hostname=$ISPC_MYSQL_HOST/g" /root/ispconfig3_install/install/autoinstall.ini
+	sed -i "s/^\$cfg\['Servers'\]\[\$i\]\['host'\] = 'localhost';/\$cfg['Servers'][\$i]['host'] = $ISPC_MYSQL_HOST;/g" /root/ispconfig3_install/install/autoinstall.ini
+	
+	
+	$cfg['Servers'][$i]['host'] = 'localhost';
 	while ! nc -z $ISPC_MYSQL_HOST 3306; do   
 	  sleep 0.1 # wait for 1/10 of the second before check again
 	done
@@ -68,7 +72,7 @@ echo "FLUSH PRIVILEGES;"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
 
 if [ ! -z "$ISPC_PASSWORD" ]; then
 	echo "USE dbispconfig;UPDATE sys_user SET passwort = md5('$ISPC_PASSWORD') WHERE username = 'admin';" | mysql -h $ISPC_MYSQL_HOST -u root -p$ISPC_MYSQL_PASS
-	sed -i "s/cfg['blowfish_secret'] = ''/cfg['blowfish_secret'] = '$ISPC_PASSWORD'/g" /var/www/html/phpmyadmin/config.inc.php
+	sed -i "s/^\$cfg\['blowfish_secret'\] = ''/\$cfg['blowfish_secret'] = '$ISPC_PASSWORD'/g" /var/www/html/phpmyadmin/config.inc.php
 	chmod 660 /var/www/html/phpmyadmin/config.inc.php
 	chown www-data:www-data -R /var/www/html/phpmyadmin
 fi
