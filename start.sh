@@ -40,6 +40,7 @@ if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 #	&& echo "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';" | mysql -u root \
 #	&& echo "FLUSH PRIVILEGES;" | mysql -u root
 	# RUN mysqladmin -u root password pass
+	python3 /user_import.py
 	mkdir -p /etc/apache2
 	cp -R /etc/apache2.org/* /etc/apache2
 	mkdir -p /var/www/html
