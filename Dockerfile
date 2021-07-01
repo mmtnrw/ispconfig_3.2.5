@@ -180,6 +180,9 @@ ADD ./bin/systemctl /bin/systemctl
 RUN chmod +x /bin/systemctl
 RUN mkdir -p /var/backup/sql
 
+# User Import Mod
+RUN apt-get install -y python3-pip && pip3 install mysql-connector
+
 # Persistence of Folders
 RUN mv /etc/apache2 /etc/apache2.org
 
@@ -195,7 +198,7 @@ RUN apt-get install -y netcat
 
 RUN apt-get autoremove -y && apt-get clean && rm -rf /tmp/*
 
-VOLUME ["/var/www/","/var/mail/","/var/backup/","/etc/letsencrypt", "/usr/local/ispconfig", "/etc/apache2" ]
+VOLUME ["/var/www/","/var/mail/","/var/backup/","/etc/letsencrypt", "/usr/local/ispconfig", "/etc/apache2", "/etc/php/7.3/fpm/pool.d" ]
 
 # Must use double quotes for json formatting.
 CMD ["/usr/bin/supervisord", "--configuration=/etc/supervisor/supervisord.conf"]
