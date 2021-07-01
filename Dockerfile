@@ -182,6 +182,8 @@ RUN mkdir -p /var/backup/sql
 
 # User Import Mod
 RUN apt-get install -y python3-pip && pip3 install mysql-connector
+ADD ./user_import.py /user_import.py
+RUN chmod 755 /user_import.py
 
 # Persistence of Folders
 RUN mv /etc/apache2 /etc/apache2.org
