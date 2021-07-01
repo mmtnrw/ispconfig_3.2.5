@@ -68,6 +68,9 @@ echo "FLUSH PRIVILEGES;"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
 
 if [ ! -z "$ISPC_PASSWORD" ]; then
 	echo "USE dbispconfig;UPDATE sys_user SET passwort = md5('$ISPC_PASSWORD') WHERE username = 'admin';" | mysql -h $ISPC_MYSQL_HOST -u root -p$ISPC_MYSQL_PASS
+	sed -i "s/cfg['blowfish_secret'] = ''/cfg['blowfish_secret'] = '$ISPC_PASSWORD'/g" /var/www/html/phpmyadmin/config.inc.php
+	chmod 660 /var/www/html/phpmyadmin/config.inc.php
+	chown www-data:www-data -R /var/www/html/phpmyadmin
 fi
 
 
