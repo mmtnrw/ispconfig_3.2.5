@@ -51,6 +51,8 @@ if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 	
 #	rm -r /root/ispconfig3_install
 else
+	ln -s /usr/local/ispconfig/interface/ssl/ispserver.crt /etc/postfix/smtpd.cert
+	ln -s /usr/local/ispconfig/interface/ssl/ispserver.key /etc/postfix/smtpd.key
 	python3 /user_import.py
 	mkdir -p /var/lib/php7.3-fpm
 	cd  /root/ispconfig3_install/install && php -q /root/ispconfig3_install/install/update.php --autoinstall=/root/ispconfig3_install/install/autoinstall.ini
