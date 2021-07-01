@@ -40,7 +40,6 @@ if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 #	&& echo "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';" | mysql -u root \
 #	&& echo "FLUSH PRIVILEGES;" | mysql -u root
 	# RUN mysqladmin -u root password pass
-	python3 /user_import.py
 	mkdir -p /etc/php/7.3/fpm/pool.d
 	mkdir -p /etc/apache2
 	cp -R /etc/apache2.org/* /etc/apache2
@@ -52,6 +51,7 @@ if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 	
 #	rm -r /root/ispconfig3_install
 else
+	python3 /user_import.py
 	cd  /root/ispconfig3_install/install && php -q /root/ispconfig3_install/install/update.php --autoinstall=/root/ispconfig3_install/install/autoinstall.ini
 fi
 
