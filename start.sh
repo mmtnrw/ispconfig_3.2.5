@@ -33,15 +33,16 @@ fi
 
 
 if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
-#	mysql_install_db
-#	service mysql start \
-#	&& echo "UPDATE mysql.user SET Password = PASSWORD('pass') WHERE User = 'root';" | mysql -u root \
-#	&& echo "UPDATE mysql.user SET plugin='mysql_native_password' where user='root';" | mysql -u root \
-#	&& echo "DELETE FROM mysql.user WHERE User='';" | mysql -u root \
-#	&& echo "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');" | mysql -u root \
-#	&& echo "DROP DATABASE IF EXISTS test;" | mysql -u root \
-#	&& echo "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';" | mysql -u root \
-#	&& echo "FLUSH PRIVILEGES;" | mysql -u root
+	mkdir -p /var/lib/mysql
+	mysql_install_db
+	service mysql start \
+	&& echo "UPDATE mysql.user SET Password = PASSWORD('$ISPC_MYSQL_PASS') WHERE User = 'root';" | mysql -u root \
+	&& echo "UPDATE mysql.user SET plugin='mysql_native_password' where user='root';" | mysql -u root \
+	&& echo "DELETE FROM mysql.user WHERE User='';" | mysql -u root \
+	&& echo "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');" | mysql -u root \
+	&& echo "DROP DATABASE IF EXISTS test;" | mysql -u root \
+	&& echo "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';" | mysql -u root \
+	&& echo "FLUSH PRIVILEGES;" | mysql -u root
 	# RUN mysqladmin -u root password pass
 	mkdir -p /etc/php/7.3/fpm/pool.d
 	mkdir -p /etc/apache2
