@@ -19,8 +19,7 @@ if [ ! -z "$ISPC_HOSTNAME" ]; then
 fi
 if [ ! -z "$ISPC_MYSQL_HOST" ]; then
 	sed -i "s/^mysql_hostname=localhost$/mysql_hostname=$ISPC_MYSQL_HOST/g" /root/ispconfig3_install/install/autoinstall.ini
-	sed -i "s/^\$cfg\['Servers'\]\[\$i\]\['host'\] = 'localhost';/\$cfg['Servers'][\$i]['host'] = $ISPC_MYSQL_HOST;/g" /root/ispconfig3_install/install/autoinstall.ini
-	
+	sed -i "s/^\$cfg\['Servers'\]\[\$i\]\['host'\].*;/\$cfg['Servers'][\$i]['host'] = '$ISPC_MYSQL_HOST';\n/g" /var/www/html/phpmyadmin/config.inc.php
 	
 	$cfg['Servers'][$i]['host'] = 'localhost';
 	while ! nc -z $ISPC_MYSQL_HOST 3306; do   
