@@ -76,7 +76,7 @@ RUN wget -P Downloads https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all
 RUN cd Downloads && tar xvf phpMyAdmin-latest-all-languages.tar.gz --strip-components=1 -C /var/www/html/phpmyadmin
 RUN cp /var/www/html/phpmyadmin/config.sample.inc.php /var/www/html/phpmyadmin/config.inc.php
 ADD ./etc/apache2/conf-available/phpmyadmin.conf /etc/apache2/conf-available/phpmyadmin.conf
-RUN a2enmod phpmyadmin
+RUN a2enconf phpmyadmin
 
 
 # --- 16 Install Mailman
