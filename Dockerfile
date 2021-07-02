@@ -204,7 +204,7 @@ RUN apt-get install -y netcat
 
 RUN apt-get autoremove -y && apt-get clean && rm -rf /tmp/*
 
-VOLUME ["/var/www/","/var/mail/","/var/backup/","/etc/letsencrypt", "/usr/local/ispconfig", "/etc/apache2", "/etc/php/7.3/fpm/pool.d" ]
+VOLUME ["/var/www/","/var/mail/","/var/backup/","/etc/letsencrypt", "/usr/local/ispconfig", "/etc/apache2", "/etc/php/7.3/fpm/pool.d", "/var/lib/mysql" ]
 
 # Must use double quotes for json formatting.
 CMD ["/usr/bin/supervisord", "--configuration=/etc/supervisor/supervisord.conf"]
