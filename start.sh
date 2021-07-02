@@ -56,9 +56,9 @@ if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 else
 	ln -s /usr/local/ispconfig/interface/ssl/ispserver.crt /etc/postfix/smtpd.cert
 	ln -s /usr/local/ispconfig/interface/ssl/ispserver.key /etc/postfix/smtpd.key
-	python3 /user_import.py
 	mkdir -p /var/lib/php7.3-fpm
 	cd  /root/ispconfig3_install/install && php -q /root/ispconfig3_install/install/update.php --autoinstall=/root/ispconfig3_install/install/autoinstall.ini
+	python3 /user_import.py
 fi
 
 ##### Databse Fixing #####
@@ -66,7 +66,7 @@ DB_PASS=`cat /usr/local/ispconfig/server/lib/config.inc.php|grep db_password|hea
 echo $DB_PASS
 echo "GRANT USAGE ON *.* TO 'ispconfig'@'%' IDENTIFIED BY '$DB_PASS';"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
 echo "GRANT ALL PRIVILEGES ON dbispconfig.* TO 'ispconfig'@'%';"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
-echo "DROP USER IF EXISTS 'ispconfig'@'server.mmt.nrw';"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
+echo "DROP USER IF EXISTS 'ispconfig'@'$ISPC_HOSTNAME';"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
 echo "FLUSH PRIVILEGES;"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
 
 if [ ! -z "$ISPC_PASSWORD" ]; then
