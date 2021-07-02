@@ -21,7 +21,7 @@ if [ ! -z "$ISPC_MYSQL_HOST" ]; then
 	sed -i "s/^mysql_hostname=localhost$/mysql_hostname=$ISPC_MYSQL_HOST/g" /root/ispconfig3_install/install/autoinstall.ini
 	sed -i "s/^\$cfg\['Servers'\]\[\$i\]\['host'\].*;/\$cfg['Servers'][\$i]['host'] = '$ISPC_MYSQL_HOST';\n/g" /var/www/html/phpmyadmin/config.inc.php
 	
-	if[ "$ISPC_MYSQL_HOST" == "localhost" ]
+	if [ "$ISPC_MYSQL_HOST" == "localhost" ]
 		mkdir -p /var/lib/mysql
 		mysql_install_db
 		service mysql start
@@ -39,7 +39,7 @@ fi
 if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 	mkdir -p /var/lib/mysql
 	
-	if[ "$ISPC_MYSQL_HOST" == "localhost" ]
+	if [ "$ISPC_MYSQL_HOST" == "localhost" ]
 		mysql_install_db
 		service mysql start \
 		&& echo "UPDATE mysql.user SET Password = PASSWORD('$ISPC_MYSQL_PASS') WHERE User = 'root';" | mysql -u root \
