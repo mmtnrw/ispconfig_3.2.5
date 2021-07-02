@@ -21,7 +21,11 @@ if [ ! -z "$ISPC_MYSQL_HOST" ]; then
 	sed -i "s/^mysql_hostname=localhost$/mysql_hostname=$ISPC_MYSQL_HOST/g" /root/ispconfig3_install/install/autoinstall.ini
 	sed -i "s/^\$cfg\['Servers'\]\[\$i\]\['host'\].*;/\$cfg['Servers'][\$i]['host'] = '$ISPC_MYSQL_HOST';\n/g" /var/www/html/phpmyadmin/config.inc.php
 	
-	$cfg['Servers'][$i]['host'] = 'localhost';
+	if[ "$ISPC_MYSQL_HOST" == "localhost" ]
+		mkdir -p /var/lib/mysql
+		mysql_install_db
+		service mysql start
+	fi
 	while ! nc -z $ISPC_MYSQL_HOST 3306; do   
 	  sleep 0.1 # wait for 1/10 of the second before check again
 	done
@@ -34,16 +38,19 @@ fi
 
 if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 	mkdir -p /var/lib/mysql
-	mysql_install_db
-	service mysql start \
-	&& echo "UPDATE mysql.user SET Password = PASSWORD('$ISPC_MYSQL_PASS') WHERE User = 'root';" | mysql -u root \
-	&& echo "UPDATE mysql.user SET plugin='mysql_native_password' where user='root';" | mysql -u root \
-	&& echo "DELETE FROM mysql.user WHERE User='';" | mysql -u root \
-	&& echo "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');" | mysql -u root \
-	&& echo "DROP DATABASE IF EXISTS test;" | mysql -u root \
-	&& echo "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';" | mysql -u root \
-	&& echo "FLUSH PRIVILEGES;" | mysql -u root
-	# RUN mysqladmin -u root password pass
+	
+	if[ "$ISPC_MYSQL_HOST" == "localhost" ]
+		mysql_install_db
+		service mysql start \
+		&& echo "UPDATE mysql.user SET Password = PASSWORD('$ISPC_MYSQL_PASS') WHERE User = 'root';" | mysql -u root \
+		&& echo "UPDATE mysql.user SET plugin='mysql_native_password' where user='root';" | mysql -u root \
+		&& echo "DELETE FROM mysql.user WHERE User='';" | mysql -u root \
+		&& echo "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');" | mysql -u root \
+		&& echo "DROP DATABASE IF EXISTS test;" | mysql -u root \
+		&& echo "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';" | mysql -u root \
+		&& echo "FLUSH PRIVILEGES;" | mysql -u root
+		# RUN mysqladmin -u root password pass
+	fi
 	mkdir -p /etc/php/7.3/fpm/pool.d
 	mkdir -p /etc/apache2
 	cp -R /etc/apache2.org/* /etc/apache2
