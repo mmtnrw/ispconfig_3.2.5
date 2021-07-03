@@ -70,10 +70,10 @@ RUN a2enconf httpoxy
 RUN apt-get -y install python3-certbot-apache
 
 # ---  phpMyAdmin
-RUN mkdir -p /var/www/html/phpmyadmin
+RUN mkdir -p /usr/share/phpmyadmin
 RUN mkdir -p /tmp/myadmin && cd /tmp/myadmin
-RUN wget -P Downloads https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.tar.gz
-RUN cd Downloads && tar xvf phpMyAdmin-latest-all-languages.tar.gz --strip-components=1 -C /var/www/html/phpmyadmin
+RUN wget -P ./Downloads https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.tar.gz
+RUN cd Downloads && tar xvf phpMyAdmin-latest-all-languages.tar.gz --strip-components=1 -C /usr/share/phpmyadmin
 RUN cp /var/www/html/phpmyadmin/config.sample.inc.php /var/www/html/phpmyadmin/config.inc.php
 ADD ./etc/apache2/conf-available/phpmyadmin.conf /etc/apache2/conf-available/phpmyadmin.conf
 RUN a2enconf phpmyadmin
@@ -205,7 +205,7 @@ RUN apt-get install -y netcat
 
 RUN apt-get autoremove -y && apt-get clean && rm -rf /tmp/*
 
-VOLUME ["/var/www/","/var/mail/","/var/backup/","/etc/letsencrypt", "/usr/local/ispconfig", "/etc/apache2", "/etc/php/7.3/fpm/pool.d", "/var/lib/mysql" ]
+VOLUME ["/var/www/","/var/mail/","/var/backup/","/etc/letsencrypt/", "/usr/local/ispconfig/", "/etc/apache2/", "/etc/php/7.3/fpm/pool.d/", "/var/lib/mysql/" ]
 
 # Must use double quotes for json formatting.
 CMD ["/usr/bin/supervisord", "--configuration=/etc/supervisor/supervisord.conf"]
