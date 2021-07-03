@@ -53,9 +53,15 @@ if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 		&& echo "DROP DATABASE IF EXISTS test;" | mysql -u root \
 		&& echo "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';" | mysql -u root \
 		&& echo "FLUSH PRIVILEGES;" | mysql -u root
-		mysql_admin -u root pass $ISPC_MYSQL_PASS
-
 	fi
+	
+#	echo "CREATE DATABASE phpmyadmin;" | mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
+#	echo "CREATE USER 'pma'@'localhost' IDENTIFIED BY '$ISPC_PASSWORD';" | mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
+#	echo "GRANT ALL PRIVILEGES ON phpmyadmin.* TO 'pma'@'localhost' IDENTIFIED BY '$ISPC_PASSWORD' WITH GRANT OPTION;" | mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
+#	echo "FLUSH PRIVILEGES;" | mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
+
+#	mysql -u root -p$ISPC_MYSQL_PASS phpmyadmin < /usr/share/phpmyadmin/sql/create_tables.sql
+
 	mkdir -p /etc/php/7.3/fpm/pool.d
 	mkdir -p /etc/apache2
 	cp -R /etc/apache2.org/* /etc/apache2
