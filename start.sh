@@ -25,33 +25,36 @@ if [ ! -z "$ISPC_MYSQL_HOST" ]; then
 		mkdir -p /var/lib/mysql
 		mysql_install_db
 		service mysql start
-		mysql_admin -u root pass $ISPC_MYSQL_PASS
 	fi
 	while ! nc -z $ISPC_MYSQL_HOST 3306; do   
 	  sleep 0.1 # wait for 1/10 of the second before check again
 	done
+else
+	ISPC_MYSQL_HOST="localhost"
 fi
 if [ ! -z "$ISPC_MYSQL_PASS" ]; then
 	sed -i "s/^mysql_root_password=pass$/mysql_root_password=$ISPC_MYSQL_PASS/g" /root/ispconfig3_install/install/autoinstall.ini
+else
+	ISPC_MYSQL_PASS="pass"
 fi
 
 
 
 if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
-	mkdir -p /var/lib/mysql
 	
 	if [ "$ISPC_MYSQL_HOST" = "localhost" ] ; then
+		mkdir -p /var/lib/mysql
 		mysql_install_db
-		service mysql start
-		mysql_admin -u root pass $ISPC_MYSQL_PASS
-		echo "UPDATE mysql.user SET Password = PASSWORD('$ISPC_MYSQL_PASS') WHERE User = 'root';" | mysql -u root \
+		service mysql start \
+		&& echo "UPDATE mysql.user SET Password = PASSWORD('$ISPC_MYSQL_PASS') WHERE User = 'root';" | mysql -u root \
 		&& echo "UPDATE mysql.user SET plugin='mysql_native_password' where user='root';" | mysql -u root \
 		&& echo "DELETE FROM mysql.user WHERE User='';" | mysql -u root \
 		&& echo "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');" | mysql -u root \
 		&& echo "DROP DATABASE IF EXISTS test;" | mysql -u root \
 		&& echo "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';" | mysql -u root \
 		&& echo "FLUSH PRIVILEGES;" | mysql -u root
-		# RUN mysqladmin -u root password pass
+		mysql_admin -u root pass $ISPC_MYSQL_PASS
+
 	fi
 	mkdir -p /etc/php/7.3/fpm/pool.d
 	mkdir -p /etc/apache2
@@ -71,13 +74,14 @@ else
 	python3 /user_import.py
 fi
 
-##### Databse Fixing #####
-DB_PASS=`cat /usr/local/ispconfig/server/lib/config.inc.php|grep db_password|head -n1|cut -d "'" -f4`
-echo $DB_PASS
-echo "GRANT USAGE ON *.* TO 'ispconfig'@'%' IDENTIFIED BY '$DB_PASS';"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
-echo "GRANT ALL PRIVILEGES ON dbispconfig.* TO 'ispconfig'@'%';"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
-echo "DROP USER IF EXISTS 'ispconfig'@'$ISPC_HOSTNAME';"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
-echo "FLUSH PRIVILEGES;"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
+##### Database Fixing #####
+if [ "$ISPC_MYSQL_HOST" = "localhost" ] ; then
+	DB_PASS=`cat /usr/local/ispconfig/server/lib/config.inc.php|grep db_password|head -n1|cut -d "'" -f4`
+	echo "GRANT USAGE ON *.* TO 'ispconfig'@'%' IDENTIFIED BY '$DB_PASS';"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
+	echo "GRANT ALL PRIVILEGES ON dbispconfig.* TO 'ispconfig'@'%';"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
+	echo "DROP USER IF EXISTS 'ispconfig'@'$ISPC_HOSTNAME';"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
+	echo "FLUSH PRIVILEGES;"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
+fi
 
 if [ ! -z "$ISPC_PASSWORD" ]; then
 	echo "USE dbispconfig;UPDATE sys_user SET passwort = md5('$ISPC_PASSWORD') WHERE username = 'admin';" | mysql -h $ISPC_MYSQL_HOST -u root -p$ISPC_MYSQL_PASS
