@@ -19,7 +19,7 @@ if [ ! -z "$ISPC_HOSTNAME" ]; then
 fi
 if [ ! -z "$ISPC_MYSQL_HOST" ]; then
 	sed -i "s/^mysql_hostname=localhost$/mysql_hostname=$ISPC_MYSQL_HOST/g" /root/ispconfig3_install/install/autoinstall.ini
-	sed -i "s/^\$cfg\['Servers'\]\[\$i\]\['host'\].*;/\$cfg['Servers'][\$i]['host'] = '$ISPC_MYSQL_HOST';\n/g" /var/www/html/phpmyadmin/config.inc.php
+	sed -i "s/^\$cfg\['Servers'\]\[\$i\]\['host'\].*;/\$cfg['Servers'][\$i]['host'] = '$ISPC_MYSQL_HOST';\n/g" /usr/share/phpmyadmin/config.inc.php
 	
 	if [[ $ISPC_MYSQL_HOST == "localhost" ]]; then
 		mkdir -p /var/lib/mysql
@@ -79,9 +79,9 @@ echo "FLUSH PRIVILEGES;"|mysql -u root -p$ISPC_MYSQL_PASS -h $ISPC_MYSQL_HOST
 
 if [ ! -z "$ISPC_PASSWORD" ]; then
 	echo "USE dbispconfig;UPDATE sys_user SET passwort = md5('$ISPC_PASSWORD') WHERE username = 'admin';" | mysql -h $ISPC_MYSQL_HOST -u root -p$ISPC_MYSQL_PASS
-	sed -i "s/^\$cfg\['blowfish_secret'\] = ''/\$cfg['blowfish_secret'] = '$ISPC_PASSWORD'/g" /var/www/html/phpmyadmin/config.inc.php
-	chmod 660 /var/www/html/phpmyadmin/config.inc.php
-	chown www-data:www-data -R /var/www/html/phpmyadmin
+	sed -i "s/^\$cfg\['blowfish_secret'\] = ''/\$cfg['blowfish_secret'] = '$ISPC_PASSWORD'/g" /usr/share/phpmyadmin/config.inc.php
+	chmod 660 /usr/share/phpmyadmin/config.inc.php
+	chown www-data:www-data -R /usr/share/phpmyadmin
 fi
 
 
