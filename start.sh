@@ -24,7 +24,6 @@ if [ ! -z "$ISPC_MYSQL_HOST" ]; then
 	if [ "$ISPC_MYSQL_HOST" = "localhost" ] ; then
 		mkdir -p /var/lib/mysql
 		mysql_install_db
-		mysql_admin -u root pass $ISPC_MYSQL_PASS
 		service mysql start
 		mysql_admin -u root pass $ISPC_MYSQL_PASS
 	fi
@@ -43,9 +42,9 @@ if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 	
 	if [ "$ISPC_MYSQL_HOST" = "localhost" ] ; then
 		mysql_install_db
-		service mysql start \
-		&& mysql_admin -u root pass $ISPC_MYSQL_PASS \
-		&& echo "UPDATE mysql.user SET Password = PASSWORD('$ISPC_MYSQL_PASS') WHERE User = 'root';" | mysql -u root \
+		service mysql start
+		mysql_admin -u root pass $ISPC_MYSQL_PASS
+		echo "UPDATE mysql.user SET Password = PASSWORD('$ISPC_MYSQL_PASS') WHERE User = 'root';" | mysql -u root \
 		&& echo "UPDATE mysql.user SET plugin='mysql_native_password' where user='root';" | mysql -u root \
 		&& echo "DELETE FROM mysql.user WHERE User='';" | mysql -u root \
 		&& echo "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');" | mysql -u root \
