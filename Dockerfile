@@ -53,7 +53,7 @@ ADD ./etc/clamav/clamd.conf /etc/clamav/clamd.conf
 
 # -- 10 Install XMPP Server
 RUN apt-get -qq update && apt-get -y -qq install git lua5.1 liblua5.1-0-dev lua-filesystem libidn11-dev libssl-dev lua-zlib lua-expat lua-event lua-bitop lua-socket lua-sec luarocks luarocks
-RUN apt-get -y install build-essential make fakeroot automake
+RUN apt-get install -y -qq build-essential make fakeroot automake
 RUN luarocks install lpc
 RUN adduser --no-create-home --disabled-login --gecos 'Metronome' metronome
 RUN cd /opt && git clone https://github.com/maranda/metronome.git metronome
@@ -193,6 +193,7 @@ RUN chmod 755 /user_import.py
 
 # Persistence of Folders
 RUN mv /etc/apache2 /etc/apache2.org
+RUN mv /etc/bind /etc/bind.org
 
 #RUN service mysql start \
 #&& echo "FLUSH PRIVILEGES;" | mysql -u root
@@ -206,7 +207,7 @@ RUN apt-get install -y netcat
 
 RUN apt-get autoremove -y && apt-get clean && rm -rf /tmp/*
 
-VOLUME ["/var/www/","/var/mail/","/var/backup/","/etc/letsencrypt/", "/usr/local/ispconfig/", "/etc/apache2/", "/etc/php/7.3/fpm/pool.d/", "/var/lib/mysql/" ]
+VOLUME ["/var/www/","/var/mail/","/var/backup/","/etc/letsencrypt/", "/usr/local/ispconfig/", "/etc/apache2/", "/etc/php/7.3/fpm/pool.d/", "/var/lib/mysql/", "/etc/bind/" ]
 
 # Must use double quotes for json formatting.
 CMD ["/usr/bin/supervisord", "--configuration=/etc/supervisor/supervisord.conf"]
