@@ -65,6 +65,8 @@ if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 	mkdir -p /etc/php/7.3/fpm/pool.d
 	mkdir -p /etc/apache2
 	cp -R /etc/apache2.org/* /etc/apache2
+	mkdir -p /etc/bind
+	cp -R /etc/bind.org/* /etc/bind
 	mkdir -p /var/www/html
 	echo "" > /var/www/html/index.html
 	source /etc/apache2/envvars
