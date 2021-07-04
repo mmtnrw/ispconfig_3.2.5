@@ -18,6 +18,7 @@ services:
       - ./ispc/letsencrypt:/etc/letsencrypt
       - ./ispc/apache2:/etc/apache2
       - ./ispc/php:/etc/php/7.3/fpm/pool.d
+      - ./ispc/bind:/etc/bind
     environment:
      # disable services :
      #   postfix ssh mysql postfix rsyslog cron bind9 apache2 fail2ban dovecot mailman clamav-daemon amavis spamassassin pure-ftpd-mysql
