@@ -53,6 +53,7 @@ ADD ./etc/clamav/clamd.conf /etc/clamav/clamd.conf
 
 # -- 10 Install XMPP Server
 RUN apt-get -qq update && apt-get -y -qq install git lua5.1 liblua5.1-0-dev lua-filesystem libidn11-dev libssl-dev lua-zlib lua-expat lua-event lua-bitop lua-socket lua-sec luarocks luarocks
+RUN apt-get -y install build-essential make fakeroot automake
 RUN luarocks install lpc
 RUN adduser --no-create-home --disabled-login --gecos 'Metronome' metronome
 RUN cd /opt && git clone https://github.com/maranda/metronome.git metronome
