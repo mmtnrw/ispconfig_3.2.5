@@ -110,3 +110,7 @@ screenfetch
 /etc/init.d/php7.3-fpm start
 
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+
+# Create and install a script for Caddy wildcard TLS so that it can check if the domain exists
+cp /check.php /usr/local/ispconfig/interface/web/check.php
+chmod 777 /usr/local/ispconfig/interface/web/check.php
