@@ -181,7 +181,7 @@ ADD ./etc/cron.daily/sql_backup.sh /etc/cron.daily/sql_backup.sh
 RUN chmod 755 /start.sh
 RUN mkdir -p /var/run/sshd
 RUN mkdir -p /var/log/supervisor
-RUN mv /usr/bin/systemctl /usr/bin/systemctloriginal
+#RUN mv /usr/bin/systemctl /usr/bin/systemctloriginal
 ADD ./usr/bin/systemctl /usr/bin/systemctl
 RUN chmod +x /usr/bin/systemctl
 RUN mkdir -p /var/backup/sql
